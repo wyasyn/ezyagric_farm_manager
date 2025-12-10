@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="ezyagric_farm_manager"
+        android:label="My farm"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

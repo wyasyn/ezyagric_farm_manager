@@ -14,7 +14,7 @@ class EzyAgricApp extends StatelessWidget {
       title: 'EzyAgric Farm Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.teal,
         useMaterial3: true,
       ),
       home: const HomeScreen(),

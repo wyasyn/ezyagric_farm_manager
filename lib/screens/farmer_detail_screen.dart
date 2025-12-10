@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/farmer.dart';
 import '../models/farm.dart';
@@ -37,50 +38,95 @@ class _FarmerDetailScreenState extends State<FarmerDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final headerHeight = MediaQuery.of(context).size.height * 0.26;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.farmer.name),
-        backgroundColor: Colors.green,
-      ),
+      backgroundColor: Colors.grey.shade100,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            color: Colors.green.shade50,
-            child: Column(
+          SizedBox(
+            height: headerHeight,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.green,
-                  child: Text(
-                    widget.farmer.name[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 32, color: Colors.white),
+                // Background image — fallback to color if asset missing
+                Image.asset(
+                  'assets/images/farmer_background.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.green.shade600,
+                    );
+                  },
+                ),
+
+                // Gradient overlay
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withValues(alpha: .5),
+                        Colors.black.withValues(alpha: .2),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  widget.farmer.name,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+
+                // Blur for glass feel
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: Container(color: Colors.transparent),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.phone, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.farmer.phoneNumber,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+
+                // Header content
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: MediaQuery.of(context).padding.top + 16,
+                    bottom: 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          _compactBackButton(),
+                          const Spacer(),
+                          _roundedChip('${_farms.length}'),
+                        ],
+                      ),
+                      const Spacer(),
+                      Text(
+                        widget.farmer.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 34,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.farmer.phoneNumber,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
+
+          // Section title
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
             child: Row(
               children: [
                 const Icon(Icons.agriculture, color: Colors.green),
@@ -88,36 +134,21 @@ class _FarmerDetailScreenState extends State<FarmerDetailScreen> {
                 Text(
                   'Farms (${_farms.length})',
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
           ),
+
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _farms.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.agriculture,
-                                size: 80, color: Colors.grey.shade400),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No farms added yet',
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.grey.shade600),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Tap + to add a farm',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      )
+                    ? _buildEmptyState()
                     : ListView.builder(
+                        padding: const EdgeInsets.only(top: 10, bottom: 16),
                         itemCount: _farms.length,
                         itemBuilder: (context, index) {
                           final farm = _farms[index];
@@ -140,6 +171,8 @@ class _FarmerDetailScreenState extends State<FarmerDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add),
         onPressed: () async {
           await Navigator.push(
             context,
@@ -149,8 +182,68 @@ class _FarmerDetailScreenState extends State<FarmerDetailScreen> {
           );
           _loadFarms();
         },
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _compactBackButton() {
+    return GestureDetector(
+      onTap: () => Navigator.pop(context),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .18),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(Icons.chevron_left, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _roundedChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .9),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.green.shade800,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.agriculture, size: 90, color: Colors.grey.shade400),
+            const SizedBox(height: 20),
+            Text(
+              'No farms added yet',
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade700),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Tap the + button to add a farm',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }

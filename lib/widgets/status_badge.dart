@@ -8,36 +8,51 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    String text;
+    late Color bgColor;
+    late Color borderColor;
+    late Color textColor;
+    late String text;
 
     switch (status) {
       case ActivityStatus.COMPLETED:
-        color = Colors.green;
+        bgColor = Colors.green.shade100;
+        borderColor = Colors.green.shade600;
+        textColor = Colors.green.shade800;
         text = 'Completed';
         break;
       case ActivityStatus.UPCOMING:
-        color = Colors.orange;
+        bgColor = Colors.orange.shade100;
+        borderColor = Colors.orange.shade600;
+        textColor = Colors.orange.shade800;
         text = 'Upcoming';
         break;
       case ActivityStatus.OVERDUE:
-        color = Colors.red;
+        bgColor = Colors.red.shade100;
+        borderColor = Colors.red.shade600;
+        textColor = Colors.red.shade800;
         text = 'Overdue';
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color, width: 1),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .03),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
+          color: textColor,
+          fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
       ),

@@ -17,91 +17,88 @@ class CostSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      color: Colors.blue.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Cost Summary',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            _buildCostRow('Estimated Total:', estimatedCost, Colors.blue),
-            const SizedBox(height: 12),
-            _buildCostRow('Actual Total:', actualCost, Colors.green),
-            const Divider(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Variance:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  CurrencyFormatter.formatVariance(variance),
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: variance > 0 ? Colors.red : Colors.green,
-                  ),
-                ),
-              ],
-            ),
-            if (overdueCount > 0) ...[
-              const Divider(height: 24),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red, width: 2),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning, color: Colors.red),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '$overdueCount overdue ${overdueCount == 1 ? 'activity' : 'activities'}',
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+    final varianceColor = variance > 0 ? Colors.red : Colors.green;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Cost Summary',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Estimated'),
+              Text(
+                CurrencyFormatter.formatUgx(estimatedCost),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCostRow(String label, double amount, Color color) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16),
-        ),
-        Text(
-          CurrencyFormatter.formatUgx(amount),
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color,
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Actual'),
+              Text(
+                CurrencyFormatter.formatUgx(actualCost),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.green),
+              ),
+            ],
+          ),
+          const Divider(height: 20, thickness: 1),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Variance'),
+              Text(
+                CurrencyFormatter.formatVariance(variance),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: varianceColor),
+              ),
+            ],
+          ),
+          if (overdueCount > 0) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.red.shade200),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning, color: Colors.red),
+                  const SizedBox(width: 10),
+                  Text(
+                    '$overdueCount overdue ${overdueCount == 1 ? 'activity' : 'activities'}',
+                    style: const TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 }
