@@ -109,9 +109,6 @@ class SeasonService {
     );
   }
 
-  // ========================================================================
-  // PLAN VS ACTUAL LOGIC - This is the core business logic
-  // ========================================================================
   Future<SeasonSummary> getSeasonSummary(String seasonId) async {
     final plannedActivities = await getPlannedActivitiesBySeasonId(seasonId);
     final actualActivities = await getActualActivitiesBySeasonId(seasonId);
