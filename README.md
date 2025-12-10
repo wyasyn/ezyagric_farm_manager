@@ -145,8 +145,8 @@ Or in VS Code/Android Studio:
 
 ## 🔧 Technologies Used
 
-- **Flutter**: 3.x
-- **Dart**: 3.x
+- **Flutter**: 3.38.4
+- **Dart**: 3.10.3
 - **shared_preferences**: ^2.2.2 (local storage)
 - **intl**: ^0.18.1 (date formatting)
 
