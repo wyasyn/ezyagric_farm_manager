@@ -181,7 +181,7 @@ class _AddPlannedActivityScreenState extends State<AddPlannedActivityScreen> {
               const SizedBox(height: 8),
               DropdownButtonFormField<ActivityType>(
                 decoration: _inputDecoration(),
-                value: _selectedActivityType,
+                initialValue: _selectedActivityType,
                 items: ActivityType.values.map((type) {
                   return DropdownMenuItem(
                     value: type,

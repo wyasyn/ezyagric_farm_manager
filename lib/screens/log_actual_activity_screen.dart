@@ -291,7 +291,7 @@ class _LogActualActivityScreenState extends State<LogActualActivityScreen> {
     required String? Function(T?) validator,
   }) {
     return DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       items: items,
       validator: validator,
       onChanged: onChanged,
