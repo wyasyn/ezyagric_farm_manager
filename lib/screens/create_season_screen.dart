@@ -45,13 +45,14 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => AddPlannedActivityScreen(seasonPlan: season),
+          builder: (_) => AddPlannedActivityScreen(seasonPlan: season),
         ),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Season plan created! Now add activities')),
+          content: Text('Season plan created! Now add activities'),
+        ),
       );
     }
   }
@@ -60,13 +61,15 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+
+      /// SCROLLABLE CONTENT
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             children: [
-              // TOP BAR (same as AddFarmerScreen)
+              // TOP BAR
               Row(
                 children: [
                   IconButton(
@@ -92,7 +95,6 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
 
               const SizedBox(height: 32),
 
-              // Section Title
               const Text(
                 'Season Information',
                 style: TextStyle(
@@ -100,7 +102,9 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+
               const SizedBox(height: 8),
+
               Text(
                 'Provide the season name and crop details.',
                 style: TextStyle(
@@ -111,14 +115,14 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
 
               const SizedBox(height: 24),
 
-              _inputLabel("Crop name*"),
+              _inputLabel('Crop name*'),
               const SizedBox(height: 8),
               _styledInput(
                 controller: _cropNameController,
-                hint: "e.g., Maize",
+                hint: 'e.g., Maize',
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return "Please enter crop name";
+                    return 'Please enter crop name';
                   }
                   return null;
                 },
@@ -126,49 +130,57 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
 
               const SizedBox(height: 20),
 
-              _inputLabel("Season name*"),
+              _inputLabel('Season name*'),
               const SizedBox(height: 8),
               _styledInput(
                 controller: _seasonNameController,
-                hint: "e.g., 2025A, Season 1",
+                hint: 'e.g., 2025A, Season 1',
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return "Please enter season name";
+                    return 'Please enter season name';
                   }
                   return null;
                 },
               ),
-
-              const SizedBox(height: 32),
-
-              // Button (same style)
-              ElevatedButton(
-                onPressed: _isSaving ? null : _createSeason,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: _isSaving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text(
-                        'Continue',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              ),
             ],
+          ),
+        ),
+      ),
+
+      /// TRUE BOTTOM PINNED BUTTON
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isSaving ? null : _createSeason,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[600],
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: _isSaving
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
           ),
         ),
       ),
@@ -194,11 +206,16 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
   }) {
     return TextFormField(
       controller: controller,
+      validator: validator,
+      onChanged: (_) => setState(() {}),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey[400]),
         filled: true,
         fillColor: Colors.white,
+        suffixIcon: controller.text.isNotEmpty
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -212,12 +229,7 @@ class _CreateSeasonScreenState extends State<CreateSeasonScreen> {
           borderSide: const BorderSide(color: Colors.green, width: 2),
         ),
         contentPadding: const EdgeInsets.all(16),
-        suffixIcon: controller.text.isNotEmpty
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : null,
       ),
-      validator: validator,
-      onChanged: (_) => setState(() {}),
     );
   }
 }

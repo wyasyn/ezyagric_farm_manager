@@ -35,42 +35,33 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final headerHeight = MediaQuery.of(context).size.height * 0.26;
+    final headerHeight = MediaQuery.of(context).size.height * 0.25;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: theme.colorScheme.surface,
       body: Column(
         children: [
-          // Modern Gradient + Glass Header
+          // ================= HEADER =================
           SizedBox(
             height: headerHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Background image
+                // Image
                 const Image(
                   image: AssetImage('assets/images/farm_background.jpg'),
                   fit: BoxFit.cover,
                 ),
 
-                // Glassmorphic overlay
+                // Soft dark overlay (minimal)
                 Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.55),
-                        Colors.black.withOpacity(0.25),
-                        Colors.grey.shade100.withOpacity(0.1),
-                      ],
-                    ),
-                  ),
+                  color: Colors.black.withOpacity(0.35),
                 ),
 
-                // Frosted blur effect
+                // Subtle blur (lighter than before)
                 BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                   child: Container(color: Colors.transparent),
                 ),
 
@@ -79,7 +70,7 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
                   padding: EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    top: MediaQuery.of(context).padding.top + 16,
+                    top: MediaQuery.of(context).padding.top + 12,
                     bottom: 16,
                   ),
                   child: Column(
@@ -87,31 +78,23 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
                     children: [
                       Row(
                         children: [
-                          AnimatedBackButton(
+                          MinimalBackButton(
                             onPressed: () => Navigator.pop(context),
                           ),
                           const Spacer(),
-                          _roundedCountChip(_farmers.length),
+                          _countChip(_farmers.length),
                         ],
                       ),
                       const Spacer(),
                       const Text(
                         'Farmers',
                         style: TextStyle(
-                          fontSize: 38,
+                          fontSize: 34,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                           letterSpacing: -0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black26,
-                              offset: Offset(0, 3),
-                              blurRadius: 6,
-                            ),
-                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -119,12 +102,12 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
             ),
           ),
 
-          // CONTENT AREA
+          // ================= CONTENT =================
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _farmers.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(theme)
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
                         itemCount: _farmers.length,
@@ -136,7 +119,7 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
+                                  builder: (_) =>
                                       FarmerDetailScreen(farmer: farmer),
                                 ),
                               );
@@ -148,11 +131,20 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
           ),
         ],
       ),
-      floatingActionButton: AnimatedAddButton(
+
+      // ================= FAB =================
+      floatingActionButton: FloatingActionButton(
+        elevation: 2,
+        backgroundColor: Colors.green[600],
+        child: const Icon(
+          Icons.add,
+          size: 28,
+          color: Colors.white,
+        ),
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddFarmerScreen()),
+            MaterialPageRoute(builder: (_) => const AddFarmerScreen()),
           );
           _loadFarmers();
         },
@@ -160,34 +152,26 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
     );
   }
 
-  // Modern counter chip
-  Widget _roundedCountChip(int count) {
+  // ================= COMPONENTS =================
+
+  Widget _countChip(int count) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .85),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          ),
-        ],
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         '$count',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.green.shade700,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  // Modern Empty State
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeData theme) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -195,27 +179,25 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.people_alt_outlined,
-              size: 90,
-              color: Colors.green.shade300,
+              Icons.people_outline,
+              size: 80,
+              color: theme.colorScheme.primary.withOpacity(0.35),
             ),
             const SizedBox(height: 20),
             const Text(
-              'No farmers added yet',
+              'No farmers yet',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
-              'Tap the button below to register your first farmer.',
+              'Tap the + button to add your first farmer.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 15,
-                height: 1.4,
+                fontSize: 14,
+                color: Colors.black.withOpacity(0.6),
               ),
             ),
           ],
@@ -225,40 +207,27 @@ class _FarmersListScreenState extends State<FarmersListScreen> {
   }
 }
 
-// ---------------------- EXISTING ANIMATIONS (unchanged) ----------------------
+// =======================================================
+// MINIMAL BACK BUTTON COMPONENT
+// =======================================================
 
-class AnimatedBackButton extends StatefulWidget {
+class MinimalBackButton extends StatefulWidget {
   final VoidCallback onPressed;
 
-  const AnimatedBackButton({Key? key, required this.onPressed})
+  const MinimalBackButton({Key? key, required this.onPressed})
       : super(key: key);
 
   @override
-  State<AnimatedBackButton> createState() => _AnimatedBackButtonState();
+  State<MinimalBackButton> createState() => _MinimalBackButtonState();
 }
 
-class _AnimatedBackButtonState extends State<AnimatedBackButton>
+class _MinimalBackButtonState extends State<MinimalBackButton>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late final AnimationController _controller = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 120));
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 140),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  late final Animation<double> _scale =
+      Tween(begin: 1.0, end: 0.9).animate(_controller);
 
   @override
   Widget build(BuildContext context) {
@@ -271,129 +240,21 @@ class _AnimatedBackButtonState extends State<AnimatedBackButton>
       onTapCancel: () => _controller.reverse(),
       child: AnimatedBuilder(
         animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: .25),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: .4),
-                ),
-              ),
-              child: const Icon(
-                Icons.chevron_left,
-                size: 28,
-                color: Colors.white,
-              ),
+        builder: (_, __) => Transform.scale(
+          scale: _scale.value,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.25),
+              borderRadius: BorderRadius.circular(12),
             ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class AnimatedAddButton extends StatefulWidget {
-  final VoidCallback onPressed;
-
-  const AnimatedAddButton({Key? key, required this.onPressed})
-      : super(key: key);
-
-  @override
-  State<AnimatedAddButton> createState() => _AnimatedAddButtonState();
-}
-
-class _AnimatedAddButtonState extends State<AnimatedAddButton>
-    with TickerProviderStateMixin {
-  late AnimationController _scaleController;
-  late AnimationController _rotateController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotateAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    _rotateController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
-    );
-
-    _rotateAnimation = Tween<double>(begin: 0.0, end: 0.5).animate(
-      CurvedAnimation(parent: _rotateController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _scaleController.dispose();
-    _rotateController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        _scaleController.forward();
-        _rotateController.forward();
-      },
-      onTapUp: (_) async {
-        await _scaleController.reverse();
-        await _rotateController.reverse();
-        widget.onPressed();
-      },
-      onTapCancel: () {
-        _scaleController.reverse();
-        _rotateController.reverse();
-      },
-      child: AnimatedBuilder(
-        animation: Listenable.merge([_scaleController, _rotateController]),
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.green.shade400,
-                    Colors.green.shade700,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.green.withValues(alpha: .35),
-                    blurRadius: 14,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Transform.rotate(
-                angle: _rotateAnimation.value * 3.14159 * 2,
-                child: const Icon(
-                  Icons.add,
-                  size: 32,
-                  color: Colors.white,
-                ),
-              ),
+            child: const Icon(
+              Icons.chevron_left,
+              size: 26,
+              color: Colors.white,
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

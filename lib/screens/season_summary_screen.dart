@@ -270,8 +270,19 @@ class _SeasonSummaryScreenState extends State<SeasonSummaryScreen> {
           _loadSummary();
         },
         backgroundColor: Colors.green.shade600,
-        icon: const Icon(Icons.add_task),
-        label: const Text('Log Actual'),
+        icon: const Icon(
+          Icons.add_task,
+          size: 28,
+          color: Colors.white,
+        ),
+        label: const Text(
+          'Log Actual',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

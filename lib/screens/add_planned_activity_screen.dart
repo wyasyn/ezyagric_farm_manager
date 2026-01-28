@@ -72,8 +72,7 @@ class _AddPlannedActivityScreenState extends State<AddPlannedActivityScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SeasonSummaryScreen(seasonPlan: widget.seasonPlan),
+        builder: (_) => SeasonSummaryScreen(seasonPlan: widget.seasonPlan),
       ),
     );
   }
@@ -95,12 +94,15 @@ class _AddPlannedActivityScreenState extends State<AddPlannedActivityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+
+      /// SCROLLABLE CONTENT
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 160),
             children: [
+              // TOP BAR
               Row(
                 children: [
                   IconButton(
@@ -188,9 +190,8 @@ class _AddPlannedActivityScreenState extends State<AddPlannedActivityScreen> {
                     child: Text(getActivityDisplayName(type)),
                   );
                 }).toList(),
-                onChanged: (value) {
-                  setState(() => _selectedActivityType = value);
-                },
+                onChanged: (value) =>
+                    setState(() => _selectedActivityType = value),
                 validator: (value) =>
                     value == null ? 'Please select an activity type' : null,
               ),
@@ -230,47 +231,60 @@ class _AddPlannedActivityScreenState extends State<AddPlannedActivityScreen> {
                   return null;
                 },
               ),
+            ],
+          ),
+        ),
+      ),
 
-              const SizedBox(height: 32),
-
-              ElevatedButton(
-                onPressed: _isSaving ? null : _saveActivity,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
+      /// TRUE BOTTOM ACTION BAR (2 BUTTONS)
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isSaving ? null : _saveActivity,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[600],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text(
+                          'Add Activity',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                 ),
-                child: _isSaving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Text(
-                        'Add Activity',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
               ),
-
-              const SizedBox(height: 16),
-
-              OutlinedButton(
-                onPressed: _finishPlanning,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.green[700],
-                  side: BorderSide(color: Colors.green.shade700, width: 1.4),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text(
-                  'Finish Planning & View Summary',
-                  style: TextStyle(fontSize: 16),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _finishPlanning,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.green[700],
+                    side: BorderSide(color: Colors.green.shade700, width: 1.4),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text(
+                    'Finish Planning & View Summary',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ),
             ],

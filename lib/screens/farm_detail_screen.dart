@@ -165,7 +165,10 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
           _loadSeasons();
         },
         backgroundColor: Colors.green.shade600,
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }

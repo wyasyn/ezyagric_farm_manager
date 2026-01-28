@@ -1,3 +1,4 @@
+import 'package:ezyagric_farm_manager/screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'farmers_list_screen.dart';
 
@@ -7,33 +8,69 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/farm_background.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withValues(alpha: .3),
-                Colors.black.withValues(alpha: .7),
-              ],
-              stops: const [0.0, 0.7, 1.0],
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/farm_background.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          child: SafeArea(
+
+          // Gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: .3),
+                  Colors.black.withValues(alpha: .7),
+                ],
+                stops: const [0.0, 0.7, 1.0],
+              ),
+            ),
+          ),
+
+          SafeArea(
             child: Column(
               children: [
-                // Top section with icon and title
-                const SizedBox(height: 40),
+                // Top bar with settings icon
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // App icon & title
                 const Icon(
                   Icons.agriculture,
                   size: 80,
@@ -51,7 +88,7 @@ class HomeScreen extends StatelessWidget {
 
                 const Spacer(),
 
-                // Bottom section with text and button
+                // Bottom content
                 Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -81,7 +118,7 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const FarmersListScreen(),
+                                builder: (_) => const FarmersListScreen(),
                               ),
                             );
                           },
@@ -93,7 +130,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -156,7 +193,11 @@ class _AnimatedFarmersButtonState extends State<AnimatedFarmersButton>
                 end: Alignment.centerRight,
                 colors: [
                   Colors.green,
-                  Color.lerp(Colors.green, Colors.white, _animation.value)!,
+                  Color.lerp(
+                    Colors.green,
+                    Colors.white,
+                    _animation.value,
+                  )!,
                 ],
                 stops: [
                   0.0,
